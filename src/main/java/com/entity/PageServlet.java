@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -38,20 +38,26 @@ public void init() throws ServletException {
 			int pageNo =Integer.parseInt(request.getParameter("pno"));
 		
 			Session s= factory.openSession();
-			Query q = s.createQuery("select a.name from Actor a");
+			/*Query q = s.createQuery("select a.name from Actor a");*/
 			
+			// using the Criteria Query
+			Criteria cr = s.createCriteria(Actor.class);
+		
 			int maxRes = 3;
 			int firstRes = maxRes*pageNo - 3;
 			
-			q.setFirstResult(firstRes);
-			q.setMaxResults(maxRes);
+/*			q.setFirstResult(firstRes);
+			q.setMaxResults(maxRes);*/
+			
+			cr.setFirstResult(firstRes);
+			cr.setMaxResults(maxRes);
 			
 			System.out.println("maxRes "+maxRes+" firstRes "+firstRes);
 			
-			List<String> actors =q.list();
+			List<Actor> actors =cr.list();
 			
-			for(String a: actors){
-				response.getWriter().println(a);
+			for(Actor a: actors){
+				response.getWriter().println(a.getName());
 			}
 			firstRes=0;
 	}
